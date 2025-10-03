@@ -1,0 +1,37 @@
+name: Static Type Checking with MyPy
+
+on: [push, pull_request]
+
+jobs:
+  type-check:
+    name: Run MyPy Type Checking
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        python-version: ['3.9', '3.10', '3.11']
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+        
+    - name: Install mypy
+      run: |
+        python -m pip install --upgrade pip
+        pip install mypy
+        
+    - name: Display MyPy version
+      run: mypy --version
+        
+    - name: Run static type checking on task1
+      run: |
+        mypy --strict tasks/task1/
+        
+    - name: Run type checking on test files
+      run: |
+        mypy tests/test_task1/
